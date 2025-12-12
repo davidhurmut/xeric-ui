@@ -117,7 +117,7 @@ function Library:CreateWindow(config)
     MainFrame.Parent = ScreenGui
     MainFrame.BackgroundColor3 = Theme.Background
     MainFrame.BorderSizePixel = 0
-    MainFrame.Position = UDim2.new(0.5, -ORIGINAL_SIZE.Offset.X/2, 0.5, -ORIGINAL_SIZE.Offset.Y/2) 
+    MainFrame.Position = UDim2.new(0.5, -ORIGINAL_SIZE.X.Offset / 2, 0.5, -ORIGINAL_SIZE.Y.Offset / 2)
     MainFrame.Size = ORIGINAL_SIZE 
     MainFrame.ClipsDescendants = true
     
