@@ -151,14 +151,14 @@ function Library:CreateWindow(config)
             TabContainer.Visible = false
             local currentPos = MainFrame.AbsolutePosition
             MainFrame.AnchorPoint = Vector2.new(0, 1)
-            MainFrame.Position = UDim2.new(0, currentPos.X, 1, -currentPos.Y - MINIMIZED_SIZE.Offset.Y)
+            MainFrame.Position = UDim2.new(0, currentPos.X, 1, -currentPos.Y - MINIMIZED_SIZE.Y.Offset)
             
             minimizeBtn.Text = "⬜"
             isMinimized = true
         else
             local currentPos = MainFrame.AbsolutePosition
             MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-            MainFrame.Position = UDim2.new(0, currentPos.X + MINIMIZED_SIZE.Offset.X/2, 0, currentPos.Y + MINIMIZED_SIZE.Offset.Y/2)
+            MainFrame.Position = UDim2.new(0, currentPos.X + MINIMIZED_SIZE.X.Offset/2, 0, currentPos.Y + MINIMIZED_SIZE.Y.Offset/2)
 
             CreateTween(MainFrame, {Size = ORIGINAL_SIZE}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
             task.delay(0.3, function()
@@ -235,7 +235,7 @@ function Library:CreateWindow(config)
     tabPadding.PaddingTop = UDim.new(0, 10)
     tabPadding.PaddingLeft = UDim.new(0, 10)
     tabPadding.PaddingRight = 
- UDim2.new(0, 10)
+ UDim.new(0, 10)
     
     ContentFrame = Instance.new("Frame")
     ContentFrame.Name = "ContentFrame"
