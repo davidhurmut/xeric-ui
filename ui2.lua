@@ -97,6 +97,7 @@ function Library:CreateWindow(config)
     MainFrame.Size = UDim2.new(0, 0, 0, 0)
     MainFrame.ClipsDescendants = true
     MainFrame.AnchorPoint = Vector2.new(0.5, 0)
+    MainFrame.Visible = true
    
     local mainCorner = Instance.new("UICorner")
     mainCorner.CornerRadius = UDim.new(0, 12)
@@ -147,6 +148,37 @@ function Library:CreateWindow(config)
     title.TextColor3 = Theme.Text
     title.TextSize = 18
     title.TextXAlignment = Enum.TextXAlignment.Left
+   
+    -- Minimize Button
+    local minimizeBtn = Instance.new("TextButton")
+    minimizeBtn.Name = "MinimizeButton"
+    minimizeBtn.Parent = topBar
+    minimizeBtn.BackgroundColor3 = Theme.Primary
+    minimizeBtn.BorderSizePixel = 0
+    minimizeBtn.Position = UDim2.new(1, -80, 0.5, -15)
+    minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+    minimizeBtn.Font = Enum.Font.GothamBold
+    minimizeBtn.Text = "−"
+    minimizeBtn.TextColor3 = Theme.Text
+    minimizeBtn.TextSize = 18
+    minimizeBtn.AutoButtonColor = false
+   
+    local minCorner = Instance.new("UICorner")
+    minCorner.CornerRadius = UDim.new(0, 8)
+    minCorner.Parent = minimizeBtn
+   
+    minimizeBtn.MouseButton1Click:Connect(function()
+        MainFrame.Visible = false
+        xericButton.Visible = true
+    end)
+   
+    minimizeBtn.MouseEnter:Connect(function()
+        CreateTween(minimizeBtn, {BackgroundColor3 = Theme.PrimaryDark}, 0.2)
+    end)
+   
+    minimizeBtn.MouseLeave:Connect(function()
+        CreateTween(minimizeBtn, {BackgroundColor3 = Theme.Primary}, 0.2)
+    end)
    
     -- Close Button
     local closeBtn = Instance.new("TextButton")
@@ -204,40 +236,6 @@ function Library:CreateWindow(config)
     tabPadding.PaddingLeft = UDim.new(0, 10)
     tabPadding.PaddingRight = UDim.new(0, 10)
    
-    -- Welcome Divider
-    local welcomeFrame = Instance.new("Frame")
-    welcomeFrame.Name = "WelcomeDivider"
-    welcomeFrame.Parent = TabContainer
-    welcomeFrame.BackgroundTransparency = 1
-    welcomeFrame.Size = UDim2.new(1, 0, 0, 60)
-    welcomeFrame.LayoutOrder = 0
-   
-    local pfp = Instance.new("ImageLabel")
-    pfp.Name = "Pfp"
-    pfp.Parent = welcomeFrame
-    pfp.BackgroundColor3 = Theme.Primary
-    pfp.Position = UDim2.new(0, 5, 0.5, -20)
-    pfp.Size = UDim2.new(0, 40, 0, 40)
-    pfp.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size100x100)
-    pfp.ScaleType = Enum.ScaleType.Fit
-   
-    local pfpCorner = Instance.new("UICorner")
-    pfpCorner.CornerRadius = UDim.new(0.5, 0)
-    pfpCorner.Parent = pfp
-   
-    local welcomeText = Instance.new("TextLabel")
-    welcomeText.Name = "WelcomeText"
-    welcomeText.Parent = welcomeFrame
-    welcomeText.BackgroundTransparency = 1
-    welcomeText.Position = UDim2.new(0, 50, 0.5, -10)
-    welcomeText.Size = UDim2.new(1, -60, 1, 0)
-    welcomeText.Font = Enum.Font.GothamBold
-    welcomeText.Text = "Welcome, " .. Players.LocalPlayer.Name
-    welcomeText.TextColor3 = Theme.Text
-    welcomeText.TextSize = 14
-    welcomeText.TextXAlignment = Enum.TextXAlignment.Left
-    welcomeText.TextYAlignment = Enum.TextYAlignment.Center
-   
     -- Content Frame
     ContentFrame = Instance.new("Frame")
     ContentFrame.Name = "ContentFrame"
@@ -264,6 +262,74 @@ function Library:CreateWindow(config)
     notifList.SortOrder = Enum.SortOrder.LayoutOrder
     notifList.Padding = UDim.new(0, 10)
     notifList.VerticalAlignment = Enum.VerticalAlignment.Top
+   
+    -- Xeric Button
+    local xericButton = Instance.new("TextButton")
+    xericButton.Name = "XericButton"
+    xericButton.Parent = ScreenGui
+    xericButton.BackgroundColor3 = Theme.Primary
+    xericButton.BorderSizePixel = 0
+    xericButton.Position = UDim2.new(0.5, -50, 1, -60)
+    xericButton.Size = UDim2.new(0, 100, 0, 50)
+    xericButton.Font = Enum.Font.GothamBold
+    xericButton.Text = "Xeric"
+    xericButton.TextColor3 = Theme.Text
+    xericButton.TextSize = 16
+    xericButton.AutoButtonColor = false
+    xericButton.Visible = false
+   
+    local xericCorner = Instance.new("UICorner")
+    xericCorner.CornerRadius = UDim.new(0, 12)
+    xericCorner.Parent = xericButton
+   
+    xericButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = true
+        xericButton.Visible = false
+    end)
+   
+    xericButton.MouseEnter:Connect(function()
+        CreateTween(xericButton, {BackgroundColor3 = Theme.PrimaryDark}, 0.2)
+    end)
+   
+    xericButton.MouseLeave:Connect(function()
+        CreateTween(xericButton, {BackgroundColor3 = Theme.Primary}, 0.2)
+    end)
+   
+    -- Make Xeric Button Draggable
+    local xDragging = false
+    local xDragInput, xMousePos, xFramePos
+   
+    xericButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            xDragging = true
+            xMousePos = input.Position
+            xFramePos = xericButton.Position
+           
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    xDragging = false
+                end
+            end)
+        end
+    end)
+   
+    xericButton.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            xDragInput = input
+        end
+    end)
+   
+    UserInputService.InputChanged:Connect(function(input)
+        if input == xDragInput and xDragging then
+            local delta = input.Position - xMousePos
+            xericButton.Position = UDim2.new(
+                xFramePos.X.Scale,
+                xFramePos.X.Offset + delta.X,
+                xFramePos.Y.Scale,
+                xFramePos.Y.Offset + delta.Y
+            )
+        end
+    end)
    
     -- Make draggable
     local dragging = false
@@ -310,17 +376,18 @@ function Library:CreateWindow(config)
    
     local function updateElements()
         closeBtn.BackgroundColor3 = Theme.Primary
+        minimizeBtn.BackgroundColor3 = Theme.Primary
+        xericButton.BackgroundColor3 = Theme.Primary
         if Window.CurrentTab then
             Window.CurrentTab.Button.BackgroundColor3 = Theme.Primary
             Window.CurrentTab.Button.TextColor3 = Theme.Text
         end
         for _, tab in pairs(Window.Tabs) do
-            if tab.Button ~= Window.CurrentTab.Button then
+            if tab.Button ~= Window.CurrentTab or not Window.CurrentTab then
                 tab.Button.BackgroundColor3 = Theme.Tertiary
                 tab.Button.TextColor3 = Theme.TextDark
             end
         end
-        pfp.BackgroundColor3 = Theme.Primary
     end
    
     -- Notification System
@@ -1339,6 +1406,39 @@ function Library:CreateWindow(config)
         Name = "Player"
     })
    
+    -- Welcome Header in Player Tab
+    local welcomeHeader = Instance.new("Frame")
+    welcomeHeader.Name = "WelcomeHeader"
+    welcomeHeader.Parent = playerTab.Content
+    welcomeHeader.BackgroundTransparency = 1
+    welcomeHeader.Size = UDim2.new(1, 0, 0, 60)
+   
+    local pfp = Instance.new("ImageLabel")
+    pfp.Name = "Pfp"
+    pfp.Parent = welcomeHeader
+    pfp.BackgroundColor3 = Theme.Primary
+    pfp.Position = UDim2.new(0, 15, 0.5, -20)
+    pfp.Size = UDim2.new(0, 40, 0, 40)
+    pfp.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size100x100)
+    pfp.ScaleType = Enum.ScaleType.Fit
+   
+    local pfpCorner = Instance.new("UICorner")
+    pfpCorner.CornerRadius = UDim.new(0.5, 0)
+    pfpCorner.Parent = pfp
+   
+    local welcomeText = Instance.new("TextLabel")
+    welcomeText.Name = "WelcomeText"
+    welcomeText.Parent = welcomeHeader
+    welcomeText.BackgroundTransparency = 1
+    welcomeText.Position = UDim2.new(0, 65, 0.5, -10)
+    welcomeText.Size = UDim2.new(1, -80, 1, 0)
+    welcomeText.Font = Enum.Font.GothamBold
+    welcomeText.Text = "Welcome, " .. Players.LocalPlayer.Name
+    welcomeText.TextColor3 = Theme.Text
+    welcomeText.TextSize = 18
+    welcomeText.TextXAlignment = Enum.TextXAlignment.Left
+    welcomeText.TextYAlignment = Enum.TextYAlignment.Center
+   
     local function addInfoLabel(text)
         local label = Instance.new("TextLabel")
         label.Parent = playerTab.Content
@@ -1432,6 +1532,7 @@ function Library:CreateWindow(config)
         end
     })
    
+    updateElements()
     return Window
 end
 return Library
