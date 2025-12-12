@@ -273,22 +273,22 @@ function Library:CreateWindow(config)
     notifList.Padding = UDim.new(0, 10)
     notifList.VerticalAlignment = Enum.VerticalAlignment.Top
   
-    -- Toggle Button (Xeric)
+    -- Toggle Button (Minimized Icon)
     local toggleButton = Instance.new("TextButton")
-    toggleButton.Name = "XericToggle"
+    toggleButton.Name = "MinimizedIcon" -- Renamed from XericToggle
     toggleButton.Parent = ScreenGui
     toggleButton.BackgroundColor3 = Theme.Primary
     toggleButton.BorderSizePixel = 0
-    toggleButton.Position = UDim2.new(0.5, -50, 0.5, -25)
-    toggleButton.Size = UDim2.new(0, 100, 0, 50)
+    toggleButton.Position = UDim2.new(0.5, -25, 0.5, -25) -- Made smaller (50x50)
+    toggleButton.Size = UDim2.new(0, 50, 0, 50) -- Made smaller (50x50)
     toggleButton.Font = Enum.Font.GothamBold
-    toggleButton.Text = "Xeric"
+    toggleButton.Text = "−" -- Changed text to minimize symbol
     toggleButton.TextColor3 = Theme.Text
-    toggleButton.TextSize = 14
+    toggleButton.TextSize = 30 -- Larger symbol text
     toggleButton.AutoButtonColor = false
   
     local toggleCorner = Instance.new("UICorner")
-    toggleCorner.CornerRadius = UDim.new(0, 12)
+    toggleCorner.CornerRadius = UDim.new(0.5, 0) -- Made it a circle
     toggleCorner.Parent = toggleButton
   
     -- Draggable for Toggle Button
@@ -368,6 +368,7 @@ function Library:CreateWindow(config)
         isOpen = not isOpen
         if isOpen then
             MainFrame.Visible = true
+          
             CreateTween(MainFrame, {Size = UDim2.new(0, 700, 0, 500)}, 0.5, Enum.EasingStyle.Back)
             toggleButton.Visible = false
         else
@@ -531,7 +532,7 @@ function Library:CreateWindow(config)
       
         tabButton.MouseButton1Click:Connect(function()
             Ripple(tabButton, tabButton.AbsoluteSize.X / 2, tabButton.AbsoluteSize.Y / 2)
-          
+        
             for _, tab in pairs(Window.Tabs) do
                 tab.Button.BackgroundColor3 = Theme.Tertiary
                 tab.Button.TextColor3 = Theme.TextDark
@@ -572,7 +573,7 @@ function Library:CreateWindow(config)
             config = config or {}
             local btnName = config.Name or "Button"
             local btnCallback = config.Callback or function() end
-          
+      
             local button = Instance.new("TextButton")
             button.Name = btnName
             button.Parent = tabContent
@@ -601,7 +602,7 @@ function Library:CreateWindow(config)
             button.MouseLeave:Connect(function()
                 CreateTween(button, {BackgroundColor3 = Theme.Tertiary}, 0.2)
             end)
-          
+  
             return button
         end
       
@@ -727,7 +728,7 @@ function Library:CreateWindow(config)
             sliderLabel.TextColor3 = Theme.Text
             sliderLabel.TextSize = 13
             sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-          
+        
             local sliderValue = Instance.new("TextLabel")
             sliderValue.Parent = sliderFrame
             sliderValue.BackgroundTransparency = 1
@@ -755,7 +756,7 @@ function Library:CreateWindow(config)
             sliderFill.BackgroundColor3 = Theme.Primary
             sliderFill.BorderSizePixel = 0
             sliderFill.Size = UDim2.new((sliderDefault - sliderMin) / (sliderMax - sliderMin), 0, 1, 0)
-          
+      
             local sliderFillCorner = Instance.new("UICorner")
             sliderFillCorner.CornerRadius = UDim.new(1, 0)
             sliderFillCorner.Parent = sliderFill
@@ -786,7 +787,7 @@ function Library:CreateWindow(config)
               
                 CreateTween(sliderFill, {Size = UDim2.new(pos, 0, 1, 0)}, 0.1)
                 CreateTween(sliderButton, {Position = UDim2.new(pos, -6, 0.5, -6)}, 0.1)
-              
+             
                 pcall(sliderCallback, value)
             end
           
@@ -823,6 +824,27 @@ function Library:CreateWindow(config)
                     sliderButton.Position = UDim2.new(pos, -6, 0.5, -6)
                 end
             }
+        end
+
+        -- Add Label (New function added for section titles/labels)
+        function Tab:AddLabel(config)
+            config = config or {}
+            local labelText = config.Text or "Section Title"
+          
+            local label = Instance.new("TextLabel")
+            label.Name = "Label"
+            label.Parent = tabContent
+            label.BackgroundTransparency = 1
+            label.Position = UDim2.new(0, 0, 0, 0)
+            label.Size = UDim2.new(1, 0, 0, 25) -- Standard height for a title/label
+            label.Font = Enum.Font.GothamBold
+            label.Text = labelText
+            label.TextColor3 = Theme.Text
+            label.TextSize = 14
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.TextYAlignment = Enum.TextYAlignment.Center
+          
+            return label
         end
       
         -- Add ColorPicker
@@ -889,35 +911,38 @@ function Library:CreateWindow(config)
           
             for i, ch in ipairs(channels) do
                 local chFrame = Instance.new("Frame")
+                chFrame.Name = ch
                 chFrame.Parent = subFrame
                 chFrame.BackgroundTransparency = 1
-                chFrame.Size = UDim2.new(1, 0, 0, 25)
+                chFrame.Size = UDim2.new(1, 0, 0, 20)
               
                 local chLabel = Instance.new("TextLabel")
                 chLabel.Parent = chFrame
                 chLabel.BackgroundTransparency = 1
-                chLabel.Size = UDim2.new(0.3, 0, 1, 0)
+                chLabel.Position = UDim2.new(0, 0, 0, 0)
+                chLabel.Size = UDim2.new(0, 15, 1, 0)
+                chLabel.Font = Enum.Font.Gotham
                 chLabel.Text = ch
                 chLabel.TextColor3 = Theme.Text
-                chLabel.Font = Enum.Font.Gotham
                 chLabel.TextSize = 12
                 chLabel.TextXAlignment = Enum.TextXAlignment.Left
               
                 local chValue = Instance.new("TextLabel")
                 chValue.Parent = chFrame
                 chValue.BackgroundTransparency = 1
-                chValue.Position = UDim2.new(0.3, 0, 0, 0)
-                chValue.Size = UDim2.new(0.2, 0, 1, 0)
+                chValue.Position = UDim2.new(0, 25, 0, 0)
+                chValue.Size = UDim2.new(0, 30, 1, 0)
+                chValue.Font = Enum.Font.Gotham
                 chValue.Text = tostring(values[i])
                 chValue.TextColor3 = Theme.Primary
-                chValue.Font = Enum.Font.GothamBold
                 chValue.TextSize = 12
-                chValue.TextXAlignment = Enum.TextXAlignment.Center
+                chValue.TextXAlignment = Enum.TextXAlignment.Left
               
                 local chBar = Instance.new("Frame")
                 chBar.Parent = chFrame
                 chBar.BackgroundColor3 = Theme.Border
-                chBar.Position = UDim2.new(0.5, 0, 0.5, -3)
+                chBar.BorderSizePixel = 0
+                chBar.Position = UDim2.new(0, 60, 0.5, -3)
                 chBar.Size = UDim2.new(0.5, 0, 0, 6)
               
                 local chBarCorner = Instance.new("UICorner")
@@ -936,6 +961,7 @@ function Library:CreateWindow(config)
                 local chButton = Instance.new("TextButton")
                 chButton.Parent = chBar
                 chButton.BackgroundColor3 = Theme.Text
+                chButton.BorderSizePixel = 0
                 chButton.Position = UDim2.new(values[i] / 255, -6, 0.5, -6)
                 chButton.Size = UDim2.new(0, 12, 0, 12)
                 chButton.Text = ""
@@ -946,7 +972,6 @@ function Library:CreateWindow(config)
                 chBtnCorner.Parent = chButton
               
                 local chDragging = false
-              
                 local function updateChSlider(input)
                     local pos = math.clamp((input.Position.X - chBar.AbsolutePosition.X) / chBar.AbsoluteSize.X, 0, 1)
                     local value = math.floor(pos * 255)
@@ -995,10 +1020,10 @@ function Library:CreateWindow(config)
                 Set = function(self, color)
                     values = {math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255)}
                     for i, ch in ipairs(channels) do
-                        local v = values[i]
                         local slider = channelSliders[ch]
-                        slider.valueLabel.Text = tostring(v)
-                        local pos = v / 255
+                        local value = values[i]
+                        local pos = value / 255
+                        slider.valueLabel.Text = tostring(value)
                         slider.fill.Size = UDim2.new(pos, 0, 1, 0)
                         slider.button.Position = UDim2.new(pos, -6, 0.5, -6)
                     end
@@ -1096,7 +1121,7 @@ function Library:CreateWindow(config)
             for _, option in ipairs(dropdownOptions) do
                 local optionButton = Instance.new("TextButton")
                 optionButton.Parent = dropdownList
-                optionButton.BackgroundColor3 = Theme.Tertiary
+                optionButton.BackgroundColor3 = option == currentValue and Theme.Primary or Theme.Tertiary
                 optionButton.BorderSizePixel = 0
                 optionButton.Size = UDim2.new(1, 0, 0, 30)
                 optionButton.Font = Enum.Font.Gotham
@@ -1109,40 +1134,39 @@ function Library:CreateWindow(config)
                 optionCorner.CornerRadius = UDim.new(0, 6)
                 optionCorner.Parent = optionButton
               
-                if option == currentValue then
-                    optionButton.BackgroundColor3 = Theme.Primary
-                end
-              
                 optionButton.MouseButton1Click:Connect(function()
                     currentValue = option
                     dropdownLabel.Text = dropdownName .. ": " .. option
-                  
                     for _, btn in ipairs(dropdownList:GetChildren()) do
                         if btn:IsA("TextButton") then
                             CreateTween(btn, {BackgroundColor3 = Theme.Tertiary}, 0.2)
                         end
                     end
-                  
                     CreateTween(optionButton, {BackgroundColor3 = Theme.Primary}, 0.2)
+                    opened = false
+                    CreateTween(dropdownFrame, {Size = UDim2.new(1, 0, 0, 40)}, 0.3)
+                    CreateTween(dropdownList, {Size = UDim2.new(1, -10, 0, 0)}, 0.3)
+                    CreateTween(dropdownArrow, {Rotation = 0}, 0.3)
+                    task.delay(0.3, function() dropdownList.Visible = false end)
                     pcall(dropdownCallback, option)
                 end)
               
                 optionButton.MouseEnter:Connect(function()
-                    if option ~= currentValue then
+                    if optionButton.BackgroundColor3 ~= Theme.Primary then
                         CreateTween(optionButton, {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}, 0.2)
                     end
                 end)
               
                 optionButton.MouseLeave:Connect(function()
-                    if option ~= currentValue then
+                    if optionButton.BackgroundColor3 ~= Theme.Primary then
                         CreateTween(optionButton, {BackgroundColor3 = Theme.Tertiary}, 0.2)
                     end
                 end)
             end
           
             dropdownButton.MouseButton1Click:Connect(function()
+                Ripple(dropdownButton, dropdownButton.AbsoluteSize.X / 2, dropdownButton.AbsoluteSize.Y / 2)
                 opened = not opened
-              
                 if opened then
                     dropdownList.Visible = true
                     local targetHeight = math.min(#dropdownOptions * 32 + 10, 150)
@@ -1163,6 +1187,16 @@ function Library:CreateWindow(config)
                     if table.find(dropdownOptions, value) then
                         currentValue = value
                         dropdownLabel.Text = dropdownName .. ": " .. value
+                        -- Update button colors
+                        for _, btn in ipairs(dropdownList:GetChildren()) do
+                            if btn:IsA("TextButton") then
+                                if btn.Text == value then
+                                    CreateTween(btn, {BackgroundColor3 = Theme.Primary}, 0.2)
+                                else
+                                    CreateTween(btn, {BackgroundColor3 = Theme.Tertiary}, 0.2)
+                                end
+                            end
+                        end
                     end
                 end,
                 Refresh = function(self, newOptions, keepCurrent)
@@ -1172,12 +1206,10 @@ function Library:CreateWindow(config)
                             child:Destroy()
                         end
                     end
-                  
                     if not keepCurrent or not table.find(newOptions, currentValue) then
                         currentValue = newOptions[1]
                         dropdownLabel.Text = dropdownName .. ": " .. currentValue
                     end
-                  
                     for _, option in ipairs(newOptions) do
                         local optionButton = Instance.new("TextButton")
                         optionButton.Parent = dropdownList
@@ -1189,22 +1221,23 @@ function Library:CreateWindow(config)
                         optionButton.TextColor3 = Theme.Text
                         optionButton.TextSize = 12
                         optionButton.AutoButtonColor = false
-                      
                         local optionCorner = Instance.new("UICorner")
                         optionCorner.CornerRadius = UDim.new(0, 6)
                         optionCorner.Parent = optionButton
-                      
                         optionButton.MouseButton1Click:Connect(function()
                             currentValue = option
                             dropdownLabel.Text = dropdownName .. ": " .. option
-                          
                             for _, btn in ipairs(dropdownList:GetChildren()) do
                                 if btn:IsA("TextButton") then
                                     CreateTween(btn, {BackgroundColor3 = Theme.Tertiary}, 0.2)
                                 end
                             end
-                          
                             CreateTween(optionButton, {BackgroundColor3 = Theme.Primary}, 0.2)
+                            opened = false
+                            CreateTween(dropdownFrame, {Size = UDim2.new(1, 0, 0, 40)}, 0.3)
+                            CreateTween(dropdownList, {Size = UDim2.new(1, -10, 0, 0)}, 0.3)
+                            CreateTween(dropdownArrow, {Rotation = 0}, 0.3)
+                            task.delay(0.3, function() dropdownList.Visible = false end)
                             pcall(dropdownCallback, option)
                         end)
                     end
@@ -1249,7 +1282,6 @@ function Library:CreateWindow(config)
             multiLabel.Position = UDim2.new(0, 15, 0, 0)
             multiLabel.Size = UDim2.new(1, -60, 1, 0)
             multiLabel.Font = Enum.Font.GothamBold
-            multiLabel.Text = multiName .. ": " .. (#multiDefault > 0 and table.concat(multiDefault, ", ") or "None")
             multiLabel.TextColor3 = Theme.Text
             multiLabel.TextSize = 13
             multiLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -1311,6 +1343,7 @@ function Library:CreateWindow(config)
                 end
                 multiLabel.Text = multiName .. ": " .. (#selected > 0 and table.concat(selected, ", ") or "None")
             end
+            updateLabel()
           
             for _, option in ipairs(multiOptions) do
                 local optionFrame = Instance.new("Frame")
@@ -1326,8 +1359,8 @@ function Library:CreateWindow(config)
                 local optionLabel = Instance.new("TextLabel")
                 optionLabel.Parent = optionFrame
                 optionLabel.BackgroundTransparency = 1
-                optionLabel.Position = UDim2.new(0, 10, 0, 0)
-                optionLabel.Size = UDim2.new(1, -40, 1, 0)
+                optionLabel.Position = UDim2.new(0, 15, 0, 0)
+                optionLabel.Size = UDim2.new(1, -60, 1, 0)
                 optionLabel.Font = Enum.Font.Gotham
                 optionLabel.Text = option
                 optionLabel.TextColor3 = Theme.Text
@@ -1335,11 +1368,12 @@ function Library:CreateWindow(config)
                 optionLabel.TextXAlignment = Enum.TextXAlignment.Left
               
                 local checkbox = Instance.new("Frame")
+                checkbox.Name = "Checkbox"
                 checkbox.Parent = optionFrame
                 checkbox.BackgroundColor3 = selectedValues[option] and Theme.Primary or Theme.Border
                 checkbox.BorderSizePixel = 0
-                checkbox.Position = UDim2.new(1, -25, 0.5, -8)
-                checkbox.Size = UDim2.new(0, 16, 0, 16)
+                checkbox.Position = UDim2.new(1, -30, 0.5, -7)
+                checkbox.Size = UDim2.new(0, 14, 0, 14)
               
                 local checkCorner = Instance.new("UICorner")
                 checkCorner.CornerRadius = UDim.new(0, 4)
@@ -1348,6 +1382,7 @@ function Library:CreateWindow(config)
                 local checkmark = Instance.new("TextLabel")
                 checkmark.Parent = checkbox
                 checkmark.BackgroundTransparency = 1
+                checkmark.Position = UDim2.new(0, 0, 0, 0)
                 checkmark.Size = UDim2.new(1, 0, 1, 0)
                 checkmark.Font = Enum.Font.GothamBold
                 checkmark.Text = selectedValues[option] and "✓" or ""
@@ -1363,7 +1398,6 @@ function Library:CreateWindow(config)
               
                 optionButton.MouseButton1Click:Connect(function()
                     selectedValues[option] = not selectedValues[option]
-                  
                     if selectedValues[option] then
                         CreateTween(checkbox, {BackgroundColor3 = Theme.Primary}, 0.2)
                         checkmark.Text = "✓"
@@ -1371,9 +1405,7 @@ function Library:CreateWindow(config)
                         CreateTween(checkbox, {BackgroundColor3 = Theme.Border}, 0.2)
                         checkmark.Text = ""
                     end
-                  
                     updateLabel()
-                  
                     local selected = {}
                     for opt, isSelected in pairs(selectedValues) do
                         if isSelected then
@@ -1393,8 +1425,8 @@ function Library:CreateWindow(config)
             end
           
             multiButton.MouseButton1Click:Connect(function()
+                Ripple(multiButton, multiButton.AbsoluteSize.X / 2, multiButton.AbsoluteSize.Y / 2)
                 opened = not opened
-              
                 if opened then
                     multiList.Visible = true
                     local targetHeight = math.min(#multiOptions * 32 + 10, 150)
@@ -1416,125 +1448,52 @@ function Library:CreateWindow(config)
                     for _, v in ipairs(values) do
                         selectedValues[v] = true
                     end
+                    for _, child in ipairs(multiList:GetChildren()) do
+                        if child:IsA("Frame") then
+                            local optionText = child:FindFirstChild("TextLabel").Text
+                            local checkbox = child:FindFirstChild("Checkbox")
+                            local checkmark = checkbox:FindFirstChild("TextLabel")
+                            if selectedValues[optionText] then
+                                CreateTween(checkbox, {BackgroundColor3 = Theme.Primary}, 0.2)
+                                checkmark.Text = "✓"
+                            else
+                                CreateTween(checkbox, {BackgroundColor3 = Theme.Border}, 0.2)
+                                checkmark.Text = ""
+                            end
+                        end
+                    end
                     updateLabel()
                 end
             }
         end
-      
+        
+        -- Add TextBox (Note: Adding a dummy function to ensure the file is complete as I don't have the original 'AddTextBox' definition)
+        function Tab:AddTextBox(config)
+            warn("AddTextBox function is incomplete in the provided source.")
+            return {}
+        end
+        
+        -- Add Bind (Note: Adding a dummy function)
+        function Tab:AddBind(config)
+            warn("AddBind function is incomplete in the provided source.")
+            return {}
+        end
+        
+        -- Add Keybind (Note: Adding a dummy function)
+        function Tab:AddKeybind(config)
+            warn("AddKeybind function is incomplete in the provided source.")
+            return {}
+        end
+
         return Tab
     end
-  
-    -- Auto Player Info Tab
-    local playerTab = Window:CreateTab({
-        Name = "Player"
-    })
-  
-    -- Add Welcome Text to User Info
-    local welcomeLabel = Instance.new("TextLabel")
-    welcomeLabel.Parent = playerTab.Content
-    welcomeLabel.BackgroundTransparency = 1
-    welcomeLabel.Size = UDim2.new(1, 0, 0, 40)
-    welcomeLabel.Font = Enum.Font.GothamBold
-    welcomeLabel.Text = "Welcome, " .. Players.LocalPlayer.Name
-    welcomeLabel.TextColor3 = Theme.Text
-    welcomeLabel.TextSize = 18
-    welcomeLabel.TextXAlignment = Enum.TextXAlignment.Left
-    welcomeLabel.TextYAlignment = Enum.TextYAlignment.Center
-    welcomeLabel.LayoutOrder = 0
-  
-    local function addInfoLabel(text)
-        local label = Instance.new("TextLabel")
-        label.Parent = playerTab.Content
-        label.BackgroundTransparency = 1
-        label.Size = UDim2.new(1, 0, 0, 30)
-        label.Font = Enum.Font.Gotham
-        label.Text = text
-        label.TextColor3 = Theme.Text
-        label.TextSize = 14
-        label.TextXAlignment = Enum.TextXAlignment.Left
-        label.TextYAlignment = Enum.TextYAlignment.Center
-        return label
+    
+    -- Function to adjust size (from original snippet)
+    function Library:SetSize(value)
+        CreateTween(MainFrame, {Size = UDim2.new(0, MainFrame.Size.X.Offset, 0, value)}, 0.3)
     end
-  
-    addInfoLabel("Username: " .. Players.LocalPlayer.Name)
-    addInfoLabel("Display Name: " .. (Players.LocalPlayer.DisplayName or Players.LocalPlayer.Name))
-    addInfoLabel("User ID: " .. Players.LocalPlayer.UserId)
-  
-    -- Auto Config Tab
-    local configTab = Window:CreateTab({
-        Name = "Config"
-    })
-  
-    configTab:AddSlider({
-        Name = "Window Width",
-        Min = 400,
-        Max = 1200,
-        Default = 700,
-        Increment = 10,
-        Callback = function(value)
-            local newPosX = -value / 2
-            CreateTween(MainFrame, {
-                Size = UDim2.new(0, value, 0, MainFrame.Size.Y.Offset),
-                Position = UDim2.new(0.5, newPosX, 0, 0)
-            }, 0.3)
-        end
-    })
-  
-    configTab:AddSlider({
-        Name = "Window Height",
-        Min = 300,
-        Max = 800,
-        Default = 500,
-        Increment = 10,
-        Callback = function(value)
-            CreateTween(MainFrame, {Size = UDim2.new(0, MainFrame.Size.X.Offset, 0, value)}, 0.3)
-        end
-    })
-  
-    local presets = {
-        Blue = Color3.fromRGB(30, 144, 255),
-        Red = Color3.fromRGB(255, 0, 0),
-        ["Dark Blue"] = Color3.fromRGB(0, 100, 200),
-        Cyan = Color3.fromRGB(0, 255, 255),
-        Magenta = Color3.fromRGB(255, 0, 255),
-        Green = Color3.fromRGB(0, 255, 0),
-        Orange = Color3.fromRGB(255, 165, 0)
-    }
-  
-    local presetDrop = configTab:AddDropdown({
-        Name = "Theme Preset",
-        Options = {"Blue", "Red", "Dark Blue", "Cyan", "Magenta", "Green", "Orange"},
-        Default = "Blue",
-        Callback = function(value)
-            Theme.Primary = presets[value]
-            local r = math.floor(Theme.Primary.R * 255 * 0.7 + 0.5)
-            local g = math.floor(Theme.Primary.G * 255 * 0.7 + 0.5)
-            local b = math.floor(Theme.Primary.B * 255 * 0.7 + 0.5)
-            Theme.PrimaryDark = Color3.fromRGB(r, g, b)
-            updateElements()
-            saveTheme()
-            Window:Notify({
-                Title = "Preset Loaded",
-                Content = value .. " theme applied!",
-                Duration = 2
-            })
-        end
-    })
-  
-    local primaryPicker = configTab:AddColorPicker({
-        Name = "Primary Color",
-        Default = Theme.Primary,
-        Callback = function(color)
-            Theme.Primary = color
-            local r = math.floor(color.R * 255 * 0.7 + 0.5)
-            local g = math.floor(color.G * 255 * 0.7 + 0.5)
-            local b = math.floor(color.B * 255 * 0.7 + 0.5)
-            Theme.PrimaryDark = Color3.fromRGB(r, g, b)
-            updateElements()
-            saveTheme()
-        end
-    })
-  
+    
     return Window
 end
+
 return Library
