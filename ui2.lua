@@ -16,7 +16,7 @@ local TabContainer
 local NotificationHolder
 local isMinimized = false
 local titleAnimation
-local ORIGINAL_SIZE = UDim2.new(0, 700, 0, 500) -- Corrected to original size
+local ORIGINAL_SIZE = UDim2.new(0, 700, 0, 500) 
 local MINIMIZED_SIZE = UDim2.new(0, 250, 0, 50)
 
 local Theme = {
