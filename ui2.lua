@@ -145,7 +145,7 @@ function Library:CreateWindow(config)
     closeCorner.Parent = closeBtn
    
     closeBtn.MouseButton1Click:Connect(function()
-        CreateTween(MainFrame, {Size = UDim2.new(0, 700, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        CreateTween(MainFrame, {Size = UDim2.new(0, MainFrame.Size.X.Offset, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
         task.wait(0.3)
         ScreenGui:Destroy()
     end)
@@ -286,6 +286,20 @@ function Library:CreateWindow(config)
     Window.Tabs = {}
     Window.CurrentTab = nil
    
+    local function updateElements()
+        closeBtn.BackgroundColor3 = Theme.Primary
+        if Window.CurrentTab then
+            Window.CurrentTab.Button.BackgroundColor3 = Theme.Primary
+            Window.CurrentTab.Button.TextColor3 = Theme.Text
+        end
+        for _, tab in pairs(Window.Tabs) do
+            if tab.Button ~= Window.CurrentTab or not Window.CurrentTab then
+                tab.Button.BackgroundColor3 = Theme.Tertiary
+                tab.Button.TextColor3 = Theme.TextDark
+            end
+        end
+    end
+   
     -- Notification System
     function Window:Notify(config)
         config = config or {}
@@ -369,7 +383,7 @@ function Library:CreateWindow(config)
         tabButton.TextColor3 = Theme.TextDark
         tabButton.TextSize = 13
         tabButton.AutoButtonColor = false
-        tabButton.LayoutOrder = 1
+        tabButton.LayoutOrder = #Window.Tabs + 1
        
         local tabCorner = Instance.new("UICorner")
         tabCorner.CornerRadius = UDim.new(0, 8)
@@ -1114,6 +1128,110 @@ function Library:CreateWindow(config)
        
         return Tab
     end
+   
+    -- Auto Player Info Tab
+    local playerTab = Window:CreateTab({
+        Name = "Player"
+    })
+   
+    local function addInfoLabel(text)
+        local label = Instance.new("TextLabel")
+        label.Parent = playerTab.Content
+        label.BackgroundTransparency = 1
+        label.Size = UDim2.new(1, 0, 0, 30)
+        label.Font = Enum.Font.Gotham
+        label.Text = text
+        label.TextColor3 = Theme.Text
+        label.TextSize = 14
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.TextYAlignment = Enum.TextYAlignment.Center
+        return label
+    end
+   
+    addInfoLabel("Username: " .. Players.LocalPlayer.Name)
+    addInfoLabel("Display Name: " .. (Players.LocalPlayer.DisplayName or Players.LocalPlayer.Name))
+    addInfoLabel("User ID: " .. Players.LocalPlayer.UserId)
+   
+    -- Auto Config Tab
+    local configTab = Window:CreateTab({
+        Name = "Config"
+    })
+   
+    configTab:AddSlider({
+        Name = "Window Width",
+        Min = 400,
+        Max = 1200,
+        Default = 700,
+        Increment = 10,
+        Callback = function(value)
+            local newSize = UDim2.new(0, value, 0, MainFrame.Size.Y.Offset)
+            local newPos = UDim2.new(0.5, -value / 2, MainFrame.Position.Y.Scale, MainFrame.Position.Y.Offset)
+            CreateTween(MainFrame, {Size = newSize, Position = newPos}, 0.3)
+        end
+    })
+   
+    configTab:AddSlider({
+        Name = "Window Height",
+        Min = 300,
+        Max = 800,
+        Default = 500,
+        Increment = 10,
+        Callback = function(value)
+            local newSize = UDim2.new(0, MainFrame.Size.X.Offset, 0, value)
+            CreateTween(MainFrame, {Size = newSize}, 0.3)
+        end
+    })
+   
+    configTab:AddSlider({
+        Name = "Primary Red",
+        Min = 0,
+        Max = 255,
+        Default = 30,
+        Increment = 1,
+        Callback = function(value)
+            local r = value
+            local g = math.floor(Theme.Primary.G * 255 + 0.5)
+            local b = math.floor(Theme.Primary.B * 255 + 0.5)
+            Theme.Primary = Color3.fromRGB(r, g, b)
+            Theme.PrimaryDark = Color3.fromRGB(math.floor(r * 0.7), math.floor(g * 0.7), math.floor(b * 0.7))
+            updateElements()
+            Window:Notify({Title = "Theme Updated", Content = "Some elements updated. Reload UI for full effect.", Duration = 3})
+        end
+    })
+   
+    configTab:AddSlider({
+        Name = "Primary Green",
+        Min = 0,
+        Max = 255,
+        Default = 144,
+        Increment = 1,
+        Callback = function(value)
+            local r = math.floor(Theme.Primary.R * 255 + 0.5)
+            local g = value
+            local b = math.floor(Theme.Primary.B * 255 + 0.5)
+            Theme.Primary = Color3.fromRGB(r, g, b)
+            Theme.PrimaryDark = Color3.fromRGB(math.floor(r * 0.7), math.floor(g * 0.7), math.floor(b * 0.7))
+            updateElements()
+            Window:Notify({Title = "Theme Updated", Content = "Some elements updated. Reload UI for full effect.", Duration = 3})
+        end
+    })
+   
+    configTab:AddSlider({
+        Name = "Primary Blue",
+        Min = 0,
+        Max = 255,
+        Default = 255,
+        Increment = 1,
+        Callback = function(value)
+            local r = math.floor(Theme.Primary.R * 255 + 0.5)
+            local g = math.floor(Theme.Primary.G * 255 + 0.5)
+            local b = value
+            Theme.Primary = Color3.fromRGB(r, g, b)
+            Theme.PrimaryDark = Color3.fromRGB(math.floor(r * 0.7), math.floor(g * 0.7), math.floor(b * 0.7))
+            updateElements()
+            Window:Notify({Title = "Theme Updated", Content = "Some elements updated. Reload UI for full effect.", Duration = 3})
+        end
+    })
    
     return Window
 end
