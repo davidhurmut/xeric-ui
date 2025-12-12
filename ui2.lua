@@ -240,7 +240,7 @@ function Library:CreateWindow(config)
             end)
             minimizeBtn.Text = "_"
             isMinimized = false
-            AnimateTitle(false)
+            AnimateTitle(true)
         end
     end)
    
@@ -339,6 +339,7 @@ function Library:CreateWindow(config)
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     CreateTween(MainFrame, {Size = ORIGINAL_SIZE}, 0.5, Enum.EasingStyle.Back)
    
+    AnimateTitle(true)
    
     local Window = {}
     Window.Tabs = {}
@@ -546,6 +547,25 @@ function Library:CreateWindow(config)
             end)
            
             return button
+        end
+
+        function Tab:AddLabel(config)
+            config = config or {}
+            local labelText = config.Text or "Label"
+           
+            local label = Instance.new("TextLabel")
+            label.Name = "Label"
+            label.Parent = tabContent
+            label.BackgroundTransparency = 1
+            label.Size = UDim2.new(1, 0, 0, 25)
+            label.Font = Enum.Font.Gotham
+            label.Text = labelText
+            label.TextColor3 = Theme.Text
+            label.TextSize = 13
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.TextWrapped = true
+           
+            return label
         end
        
         function Tab:AddToggle(config)
