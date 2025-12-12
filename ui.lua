@@ -359,7 +359,6 @@ function Library:CreateWindow(config)
         notif.BorderSizePixel = 0
         notif.Size = UDim2.new(1, 0, 0, 85)
         notif.ClipsDescendants = true
-        notif.Position = UDim2.new(0, 300, 0, 0)
        
         local notifCorner = Instance.new("UICorner")
         notifCorner.CornerRadius = UDim.new(0, 10)
@@ -414,10 +413,14 @@ function Library:CreateWindow(config)
        
         CreateTween(durationBarFill, {Size = UDim2.new(0, 0, 1, 0)}, notifDuration, Enum.EasingStyle.Linear)
        
-        CreateTween(notif, {Position = UDim2.new(0, 0, 0, 0)}, 0.4, Enum.EasingStyle.Back)
+        task.wait()
+        local layoutPos = notif.Position
+        local offscreenPos = UDim2.new(1, 0, layoutPos.Y.Scale, layoutPos.Y.Offset)
+        notif.Position = offscreenPos
+        CreateTween(notif, {Position = layoutPos}, 0.4, Enum.EasingStyle.Back)
      
         task.delay(notifDuration, function()
-            CreateTween(notif, {Position = UDim2.new(0, 300, 0, 0)}, 0.3)
+            CreateTween(notif, {Position = offscreenPos}, 0.3)
             task.wait(0.3)
             notif:Destroy()
         end)
