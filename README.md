@@ -23,7 +23,7 @@ A sleek, modern UI library for Roblox, featuring animated, responsive widgets fo
 ## 📦 Installation
 
 ```lua
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/FluentUI/main/FluentUI.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/rxdavidcb/xeric-ui/refs/heads/main/ui.lua"))()
 ```
 
 ## 🚀 Quick Start
@@ -67,7 +67,7 @@ Window:Notify({ Title = "Alert", Content = "Message", Type = "Success", Duration
 ## 💡 Full Example
 
 ```lua
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/FluentUI/main/FluentUI.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/rxdavidcb/xeric-ui/refs/heads/main/ui.lua"))()
 
 local Window = Library:CreateWindow({ Name = "Example Hub" })
 local Main = Window:CreateTab({ Name = "Main" })
@@ -86,6 +86,4 @@ Window:Notify({ Title = "Loaded", Content = "Example ready.", Type = "Success" }
 
 
 
-## 🤝 Contributing & License
-
-Fork and PR for improvements. MIT License. Credits: rxdavidcb  (formerly fluflu; original). Maintained by [rxdavidcb](https://github.com/rxdavidcb).
+MIT License. Credits: rxdavidcb  (formerly fluflu; original). Maintained by [rxdavidcb](https://github.com/rxdavidcb).
