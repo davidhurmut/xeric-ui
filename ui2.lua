@@ -211,39 +211,6 @@ function Library:CreateWindow(config)
     tabPadding.PaddingLeft = UDim.new(0, 10)
     tabPadding.PaddingRight = UDim.new(0, 10)
   
-    local pfpFrame = Instance.new("Frame")
-    pfpFrame.Name = "PfpDivider"
-    pfpFrame.Parent = TabContainer
-    pfpFrame.BackgroundTransparency = 1
-    pfpFrame.Size = UDim2.new(1, 0, 0, 60)
-    pfpFrame.LayoutOrder = 0
-  
-    local pfp = Instance.new("ImageLabel")
-    pfp.Name = "Pfp"
-    pfp.Parent = pfpFrame
-    pfp.BackgroundColor3 = Theme.Primary
-    pfp.Position = UDim2.new(0, 5, 0.5, -20)
-    pfp.Size = UDim2.new(0, 40, 0, 40)
-    pfp.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size100x100)
-    pfp.ScaleType = Enum.ScaleType.Fit
-  
-    local pfpCorner = Instance.new("UICorner")
-    pfpCorner.CornerRadius = UDim.new(0.5, 0)
-    pfpCorner.Parent = pfp
-
-    local welcomeText = Instance.new("TextLabel")
-    welcomeText.Name = "WelcomeText"
-    welcomeText.Parent = pfpFrame
-    welcomeText.BackgroundTransparency = 1
-    welcomeText.Position = UDim2.new(0, 50, 0.5, -10)
-    welcomeText.Size = UDim2.new(1, -60, 1, 0)
-    welcomeText.Font = Enum.Font.GothamBold
-    welcomeText.Text = "Welcome, " .. Players.LocalPlayer.Name
-    welcomeText.TextColor3 = Theme.Text
-    welcomeText.TextSize = 16
-    welcomeText.TextXAlignment = Enum.TextXAlignment.Left
-    welcomeText.TextYAlignment = Enum.TextYAlignment.Center
-  
     ContentFrame = Instance.new("Frame")
     ContentFrame.Name = "ContentFrame"
     ContentFrame.Parent = MainFrame
@@ -292,6 +259,7 @@ function Library:CreateWindow(config)
     toggleCorner.CornerRadius = UDim.new(0, 12)
     toggleCorner.Parent = toggleButton
   
+    local savedTogglePos = UDim2.new(1, buttonOffsetX, 0.5, buttonOffsetY)
     local toggleDragging = false
     local toggleDragInput, toggleMousePos, toggleFramePos
   
@@ -304,6 +272,7 @@ function Library:CreateWindow(config)
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     toggleDragging = false
+                    savedTogglePos = toggleButton.Position
                 end
             end)
         end
@@ -325,6 +294,14 @@ function Library:CreateWindow(config)
                 toggleFramePos.Y.Offset + delta.Y
             )
         end
+    end)
+  
+    toggleButton.MouseButton1Click:Connect(function()
+        if toggleDragging then
+            return
+        end
+        Ripple(toggleButton, toggleButton.AbsoluteSize.X / 2, toggleButton.AbsoluteSize.Y / 2)
+        toggleUI()
     end)
   
     local dragging = false
@@ -368,7 +345,7 @@ function Library:CreateWindow(config)
         if isOpen then
             MainFrame.Visible = true
             CreateTween(MainFrame, {Size = UDim2.new(0, 700, 0, 500)}, 0.5, Enum.EasingStyle.Back)
-            local offScreenPos = UDim2.new(1, buttonOffsetX, 0.5, 100)
+            local offScreenPos = UDim2.new(savedTogglePos.X.Scale, savedTogglePos.X.Offset, savedTogglePos.Y.Scale, savedTogglePos.Y.Offset + 100)
             CreateTween(toggleButton, {Position = offScreenPos}, 0.3)
             task.wait(0.3)
             toggleButton.Visible = false
@@ -376,17 +353,12 @@ function Library:CreateWindow(config)
             CreateTween(MainFrame, {Size = UDim2.new(0, MainFrame.Size.X.Offset, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
             task.wait(0.3)
             MainFrame.Visible = false
-            toggleButton.Visible = true
-            local offScreenPos = UDim2.new(1, buttonOffsetX, 0.5, 100)
+            local offScreenPos = UDim2.new(savedTogglePos.X.Scale, savedTogglePos.X.Offset, savedTogglePos.Y.Scale, savedTogglePos.Y.Offset + 100)
             toggleButton.Position = offScreenPos
-            CreateTween(toggleButton, {Position = UDim2.new(1, buttonOffsetX, 0.5, buttonOffsetY)}, 0.3, Enum.EasingStyle.Back)
+            toggleButton.Visible = true
+            CreateTween(toggleButton, {Position = savedTogglePos}, 0.3, Enum.EasingStyle.Back)
         end
     end
-  
-    toggleButton.MouseButton1Click:Connect(function()
-        Ripple(toggleButton, toggleButton.AbsoluteSize.X / 2, toggleButton.AbsoluteSize.Y / 2)
-        toggleUI()
-    end)
   
     minimizeBtn.MouseButton1Click:Connect(function()
         toggleUI()
@@ -415,7 +387,6 @@ function Library:CreateWindow(config)
                 tab.Button.TextColor3 = Theme.TextDark
             end
         end
-        pfp.BackgroundColor3 = Theme.Primary
     end
   
     function Window:Notify(config)
@@ -1420,6 +1391,38 @@ function Library:CreateWindow(config)
     local playerTab = Window:CreateTab({
         Name = "Player"
     })
+  
+    local welcomeFrame = Instance.new("Frame")
+    welcomeFrame.Parent = playerTab.Content
+    welcomeFrame.BackgroundTransparency = 1
+    welcomeFrame.Size = UDim2.new(1, 0, 0, 60)
+    welcomeFrame.LayoutOrder = 0
+  
+    local pfp = Instance.new("ImageLabel")
+    pfp.Name = "Pfp"
+    pfp.Parent = welcomeFrame
+    pfp.BackgroundColor3 = Theme.Primary
+    pfp.Position = UDim2.new(0, 15, 0.5, -20)
+    pfp.Size = UDim2.new(0, 40, 0, 40)
+    pfp.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size100x100)
+    pfp.ScaleType = Enum.ScaleType.Fit
+  
+    local pfpCorner = Instance.new("UICorner")
+    pfpCorner.CornerRadius = UDim.new(0.5, 0)
+    pfpCorner.Parent = pfp
+  
+    local welcomeText = Instance.new("TextLabel")
+    welcomeText.Name = "WelcomeText"
+    welcomeText.Parent = welcomeFrame
+    welcomeText.BackgroundTransparency = 1
+    welcomeText.Position = UDim2.new(0, 65, 0.5, -10)
+    welcomeText.Size = UDim2.new(1, -80, 1, 0)
+    welcomeText.Font = Enum.Font.GothamBold
+    welcomeText.Text = "Welcome, " .. Players.LocalPlayer.Name
+    welcomeText.TextColor3 = Theme.Text
+    welcomeText.TextSize = 20
+    welcomeText.TextXAlignment = Enum.TextXAlignment.Left
+    welcomeText.TextYAlignment = Enum.TextYAlignment.Center
   
     local function addInfoLabel(text)
         local label = Instance.new("TextLabel")
