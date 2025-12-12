@@ -1,13 +1,17 @@
+-- Modern Fluent UI Library (Black & Blue Theme)
+-- Inspired by Rayfield & Fluent UI
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Library = {}
+-- UI Variables
 local ScreenGui
 local MainFrame
 local ContentFrame
 local TabContainer
 local NotificationHolder
+-- Theme Colors
 local Theme = {
     Background = Color3.fromRGB(15, 15, 15),
     Secondary = Color3.fromRGB(20, 20, 20),
@@ -41,6 +45,7 @@ local function loadTheme()
     end
 end
 loadTheme()
+-- Utility Functions
 local function CreateTween(object, properties, duration, style, direction)
     local tweenInfo = TweenInfo.new(duration or 0.3, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out)
     local tween = TweenService:Create(object, tweenInfo, properties)
@@ -70,16 +75,19 @@ local function Ripple(object, x, y)
         circle:Destroy()
     end)
 end
+-- Create Main Window
 function Library:CreateWindow(config)
     config = config or {}
     local windowName = config.Name or "Fluent UI"
   
+    -- Create ScreenGui
     ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "FluentUI"
     ScreenGui.Parent = game.CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     ScreenGui.ResetOnSpawn = false
   
+    -- Main Frame
     MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
@@ -95,6 +103,7 @@ function Library:CreateWindow(config)
     mainCorner.CornerRadius = UDim.new(0, 12)
     mainCorner.Parent = MainFrame
   
+    -- Shadow Effect
     local shadow = Instance.new("ImageLabel")
     shadow.Name = "Shadow"
     shadow.Parent = MainFrame
@@ -108,6 +117,7 @@ function Library:CreateWindow(config)
     shadow.ScaleType = Enum.ScaleType.Slice
     shadow.SliceCenter = Rect.new(49, 49, 450, 450)
   
+    -- Top Bar
     local topBar = Instance.new("Frame")
     topBar.Name = "TopBar"
     topBar.Parent = MainFrame
@@ -126,6 +136,7 @@ function Library:CreateWindow(config)
     topCover.Position = UDim2.new(0, 0, 1, -10)
     topCover.Size = UDim2.new(1, 0, 0, 10)
   
+    -- Title
     local title = Instance.new("TextLabel")
     title.Name = "Title"
     title.Parent = topBar
@@ -138,6 +149,7 @@ function Library:CreateWindow(config)
     title.TextSize = 18
     title.TextXAlignment = Enum.TextXAlignment.Left
   
+    -- Minimize Button
     local minimizeBtn = Instance.new("TextButton")
     minimizeBtn.Name = "MinimizeButton"
     minimizeBtn.Parent = topBar
@@ -163,6 +175,7 @@ function Library:CreateWindow(config)
         CreateTween(minimizeBtn, {BackgroundColor3 = Theme.PrimaryDark}, 0.2)
     end)
   
+    -- Close Button
     local closeBtn = Instance.new("TextButton")
     closeBtn.Name = "CloseButton"
     closeBtn.Parent = topBar
@@ -188,6 +201,7 @@ function Library:CreateWindow(config)
         CreateTween(closeBtn, {BackgroundColor3 = Theme.Primary}, 0.2)
     end)
   
+    -- Tab Container
     TabContainer = Instance.new("Frame")
     TabContainer.Name = "TabContainer"
     TabContainer.Parent = MainFrame
@@ -211,6 +225,28 @@ function Library:CreateWindow(config)
     tabPadding.PaddingLeft = UDim.new(0, 10)
     tabPadding.PaddingRight = UDim.new(0, 10)
   
+    -- PFP Only (removed welcome text from sidebar)
+    local pfpFrame = Instance.new("Frame")
+    pfpFrame.Name = "PfpDivider"
+    pfpFrame.Parent = TabContainer
+    pfpFrame.BackgroundTransparency = 1
+    pfpFrame.Size = UDim2.new(1, 0, 0, 60)
+    pfpFrame.LayoutOrder = 0
+  
+    local pfp = Instance.new("ImageLabel")
+    pfp.Name = "Pfp"
+    pfp.Parent = pfpFrame
+    pfp.BackgroundColor3 = Theme.Primary
+    pfp.Position = UDim2.new(0, 5, 0.5, -20)
+    pfp.Size = UDim2.new(0, 40, 0, 40)
+    pfp.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size100x100)
+    pfp.ScaleType = Enum.ScaleType.Fit
+  
+    local pfpCorner = Instance.new("UICorner")
+    pfpCorner.CornerRadius = UDim.new(0.5, 0)
+    pfpCorner.Parent = pfp
+  
+    -- Content Frame
     ContentFrame = Instance.new("Frame")
     ContentFrame.Name = "ContentFrame"
     ContentFrame.Parent = MainFrame
@@ -223,6 +259,7 @@ function Library:CreateWindow(config)
     contentCorner.CornerRadius = UDim.new(0, 10)
     contentCorner.Parent = ContentFrame
   
+    -- Notification Holder
     NotificationHolder = Instance.new("Frame")
     NotificationHolder.Name = "Notifications"
     NotificationHolder.Parent = ScreenGui
@@ -236,53 +273,44 @@ function Library:CreateWindow(config)
     notifList.Padding = UDim.new(0, 10)
     notifList.VerticalAlignment = Enum.VerticalAlignment.Top
   
-    local isMobile = UserInputService.TouchEnabled
-    local buttonSize = isMobile and UDim2.new(0, 80, 0, 40) or UDim2.new(0, 120, 0, 60)
-    local textSize = isMobile and 12 or 16
-    local buttonOffsetX = isMobile and -90 or -130
-    local buttonOffsetY = isMobile and -20 or -30
-  
+    -- Toggle Button (Xeric)
     local toggleButton = Instance.new("TextButton")
     toggleButton.Name = "XericToggle"
     toggleButton.Parent = ScreenGui
     toggleButton.BackgroundColor3 = Theme.Primary
     toggleButton.BorderSizePixel = 0
-    toggleButton.Position = UDim2.new(1, buttonOffsetX, 0.5, buttonOffsetY)
-    toggleButton.Size = buttonSize
+    toggleButton.Position = UDim2.new(0.5, -50, 0.5, -25)
+    toggleButton.Size = UDim2.new(0, 100, 0, 50)
     toggleButton.Font = Enum.Font.GothamBold
     toggleButton.Text = "Xeric"
     toggleButton.TextColor3 = Theme.Text
-    toggleButton.TextSize = textSize
+    toggleButton.TextSize = 14
     toggleButton.AutoButtonColor = false
   
     local toggleCorner = Instance.new("UICorner")
     toggleCorner.CornerRadius = UDim.new(0, 12)
     toggleCorner.Parent = toggleButton
   
-    local savedTogglePos = UDim2.new(1, buttonOffsetX, 0.5, buttonOffsetY)
+    -- Draggable for Toggle Button
     local toggleDragging = false
-    local downPos = nil
     local toggleDragInput, toggleMousePos, toggleFramePos
   
     toggleButton.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
             toggleDragging = true
-            downPos = input.Position
             toggleMousePos = input.Position
             toggleFramePos = toggleButton.Position
           
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     toggleDragging = false
-                    downPos = nil
-                    savedTogglePos = toggleButton.Position
                 end
             end)
         end
     end)
   
     toggleButton.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
             toggleDragInput = input
         end
     end)
@@ -299,17 +327,7 @@ function Library:CreateWindow(config)
         end
     end)
   
-    toggleButton.MouseButton1Click:Connect(function()
-        if downPos then
-            local currentPos = UserInputService:GetMouseLocation()
-            if (Vector2.new(currentPos.X, currentPos.Y) - downPos).Magnitude > 10 then
-                return
-            end
-        end
-        Ripple(toggleButton, toggleButton.AbsoluteSize.X / 2, toggleButton.AbsoluteSize.Y / 2)
-        toggleUI()
-    end)
-  
+    -- Make MainFrame Draggable
     local dragging = false
     local dragInput, mousePos, framePos
   
@@ -351,20 +369,19 @@ function Library:CreateWindow(config)
         if isOpen then
             MainFrame.Visible = true
             CreateTween(MainFrame, {Size = UDim2.new(0, 700, 0, 500)}, 0.5, Enum.EasingStyle.Back)
-            local offScreenPos = UDim2.new(savedTogglePos.X.Scale, savedTogglePos.X.Offset, savedTogglePos.Y.Scale, savedTogglePos.Y.Offset + 100)
-            CreateTween(toggleButton, {Position = offScreenPos}, 0.3)
-            task.wait(0.3)
             toggleButton.Visible = false
         else
             CreateTween(MainFrame, {Size = UDim2.new(0, MainFrame.Size.X.Offset, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
             task.wait(0.3)
             MainFrame.Visible = false
-            local offScreenPos = UDim2.new(savedTogglePos.X.Scale, savedTogglePos.X.Offset, savedTogglePos.Y.Scale, savedTogglePos.Y.Offset + 100)
-            toggleButton.Position = offScreenPos
             toggleButton.Visible = true
-            CreateTween(toggleButton, {Position = savedTogglePos}, 0.3, Enum.EasingStyle.Back)
         end
     end
+  
+    toggleButton.MouseButton1Click:Connect(function()
+        Ripple(toggleButton, toggleButton.AbsoluteSize.X / 2, toggleButton.AbsoluteSize.Y / 2)
+        toggleUI()
+    end)
   
     minimizeBtn.MouseButton1Click:Connect(function()
         toggleUI()
@@ -393,8 +410,10 @@ function Library:CreateWindow(config)
                 tab.Button.TextColor3 = Theme.TextDark
             end
         end
+        pfp.BackgroundColor3 = Theme.Primary
     end
   
+    -- Notification System
     function Window:Notify(config)
         config = config or {}
         local notifTitle = config.Title or "Notification"
@@ -446,8 +465,10 @@ function Library:CreateWindow(config)
         notifContentLabel.TextYAlignment = Enum.TextYAlignment.Top
         notifContentLabel.TextWrapped = true
       
+        -- Animate in
         CreateTween(notif, {Position = UDim2.new(0, 0, 0, 0)}, 0.4, Enum.EasingStyle.Back)
       
+        -- Animate out
         task.delay(notifDuration, function()
             CreateTween(notif, {Position = UDim2.new(0, 300, 0, 0)}, 0.3)
             task.wait(0.3)
@@ -455,6 +476,7 @@ function Library:CreateWindow(config)
         end)
     end
   
+    -- Create Tab
     function Window:CreateTab(config)
         config = config or {}
         local tabName = config.Name or "Tab"
@@ -545,6 +567,7 @@ function Library:CreateWindow(config)
             Window.CurrentTab = Tab
         end
       
+        -- Add Button
         function Tab:AddButton(config)
             config = config or {}
             local btnName = config.Name or "Button"
@@ -582,6 +605,7 @@ function Library:CreateWindow(config)
             return button
         end
       
+        -- Add Toggle
         function Tab:AddToggle(config)
             config = config or {}
             local toggleName = config.Name or "Toggle"
@@ -672,6 +696,7 @@ function Library:CreateWindow(config)
             }
         end
       
+        -- Add Slider
         function Tab:AddSlider(config)
             config = config or {}
             local sliderName = config.Name or "Slider"
@@ -749,7 +774,7 @@ function Library:CreateWindow(config)
             sliderBtnCorner.Parent = sliderButton
           
             local currentValue = sliderDefault
-            local sliderDragging = false
+            local dragging = false
           
             local function updateSlider(input)
                 local pos = math.clamp((input.Position.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X, 0, 1)
@@ -765,20 +790,20 @@ function Library:CreateWindow(config)
                 pcall(sliderCallback, value)
             end
           
-            local connectionDown = sliderButton.MouseButton1Down:Connect(function()
-                sliderDragging = true
+            sliderButton.MouseButton1Down:Connect(function()
+                dragging = true
                 CreateTween(sliderButton, {Size = UDim2.new(0, 16, 0, 16)}, 0.1)
             end)
           
-            local connectionEnded = UserInputService.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 and sliderDragging then
-                    sliderDragging = false
+            UserInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = false
                     CreateTween(sliderButton, {Size = UDim2.new(0, 12, 0, 12)}, 0.1)
                 end
             end)
           
-            local connectionChanged = UserInputService.InputChanged:Connect(function(input)
-                if sliderDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            UserInputService.InputChanged:Connect(function(input)
+                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                     updateSlider(input)
                 end
             end)
@@ -796,15 +821,11 @@ function Library:CreateWindow(config)
                     local pos = (currentValue - sliderMin) / (sliderMax - sliderMin)
                     sliderFill.Size = UDim2.new(pos, 0, 1, 0)
                     sliderButton.Position = UDim2.new(pos, -6, 0.5, -6)
-                end,
-                Destroy = function(self)
-                    connectionDown:Disconnect()
-                    connectionEnded:Disconnect()
-                    connectionChanged:Disconnect()
                 end
             }
         end
       
+        -- Add ColorPicker
         function Tab:AddColorPicker(config)
             config = config or {}
             local pickerName = config.Name or "Color Picker"
@@ -833,6 +854,7 @@ function Library:CreateWindow(config)
             pickerLabel.TextSize = 13
             pickerLabel.TextXAlignment = Enum.TextXAlignment.Left
           
+            -- Preview
             local preview = Instance.new("Frame")
             preview.Name = "Preview"
             preview.Parent = pickerFrame
@@ -844,6 +866,7 @@ function Library:CreateWindow(config)
             previewCorner.CornerRadius = UDim.new(0, 4)
             previewCorner.Parent = preview
           
+            -- Sub frame for sliders
             local subFrame = Instance.new("Frame")
             subFrame.Parent = pickerFrame
             subFrame.BackgroundTransparency = 1
@@ -863,7 +886,6 @@ function Library:CreateWindow(config)
             local channels = {"R", "G", "B"}
             local values = {math.floor(defaultColor.R * 255), math.floor(defaultColor.G * 255), math.floor(defaultColor.B * 255)}
             local channelSliders = {}
-            local connections = {}
           
             for i, ch in ipairs(channels) do
                 local chFrame = Instance.new("Frame")
@@ -938,29 +960,23 @@ function Library:CreateWindow(config)
                     pcall(pickerCallback, newColor)
                 end
               
-                local chDown = chButton.MouseButton1Down:Connect(function()
+                chButton.MouseButton1Down:Connect(function()
                     chDragging = true
                     CreateTween(chButton, {Size = UDim2.new(0, 16, 0, 16)}, 0.1)
                 end)
               
-                table.insert(connections, chDown)
-              
-                local chEnded = UserInputService.InputEnded:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 and chDragging then
+                UserInputService.InputEnded:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
                         chDragging = false
                         CreateTween(chButton, {Size = UDim2.new(0, 12, 0, 12)}, 0.1)
                     end
                 end)
               
-                table.insert(connections, chEnded)
-              
-                local chChanged = UserInputService.InputChanged:Connect(function(input)
+                UserInputService.InputChanged:Connect(function(input)
                     if chDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                         updateChSlider(input)
                     end
                 end)
-              
-                table.insert(connections, chChanged)
               
                 chBar.InputBegan:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -987,15 +1003,11 @@ function Library:CreateWindow(config)
                         slider.button.Position = UDim2.new(pos, -6, 0.5, -6)
                     end
                     preview.BackgroundColor3 = color
-                end,
-                Destroy = function(self)
-                    for _, conn in ipairs(connections) do
-                        conn:Disconnect()
-                    end
                 end
             }
         end
       
+        -- Add Dropdown
         function Tab:AddDropdown(config)
             config = config or {}
             local dropdownName = config.Name or "Dropdown"
@@ -1200,6 +1212,7 @@ function Library:CreateWindow(config)
             }
         end
       
+        -- Add Multi-Dropdown
         function Tab:AddMultiDropdown(config)
             config = config or {}
             local multiName = config.Name or "Multi Dropdown"
@@ -1411,41 +1424,23 @@ function Library:CreateWindow(config)
         return Tab
     end
   
+    -- Auto Player Info Tab
     local playerTab = Window:CreateTab({
         Name = "Player"
     })
   
-    local welcomeFrame = Instance.new("Frame")
-    welcomeFrame.Parent = playerTab.Content
-    welcomeFrame.BackgroundTransparency = 1
-    welcomeFrame.Size = UDim2.new(1, 0, 0, 60)
-    welcomeFrame.LayoutOrder = 0
-  
-    local pfp = Instance.new("ImageLabel")
-    pfp.Name = "Pfp"
-    pfp.Parent = welcomeFrame
-    pfp.BackgroundColor3 = Theme.Primary
-    pfp.Position = UDim2.new(0, 15, 0.5, -20)
-    pfp.Size = UDim2.new(0, 40, 0, 40)
-    pfp.Image = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size100x100)
-    pfp.ScaleType = Enum.ScaleType.Fit
-  
-    local pfpCorner = Instance.new("UICorner")
-    pfpCorner.CornerRadius = UDim.new(0.5, 0)
-    pfpCorner.Parent = pfp
-  
-    local welcomeText = Instance.new("TextLabel")
-    welcomeText.Name = "WelcomeText"
-    welcomeText.Parent = welcomeFrame
-    welcomeText.BackgroundTransparency = 1
-    welcomeText.Position = UDim2.new(0, 65, 0.5, -10)
-    welcomeText.Size = UDim2.new(1, -80, 1, 0)
-    welcomeText.Font = Enum.Font.GothamBold
-    welcomeText.Text = "Welcome, " .. Players.LocalPlayer.Name
-    welcomeText.TextColor3 = Theme.Text
-    welcomeText.TextSize = 20
-    welcomeText.TextXAlignment = Enum.TextXAlignment.Left
-    welcomeText.TextYAlignment = Enum.TextYAlignment.Center
+    -- Add Welcome Text to User Info
+    local welcomeLabel = Instance.new("TextLabel")
+    welcomeLabel.Parent = playerTab.Content
+    welcomeLabel.BackgroundTransparency = 1
+    welcomeLabel.Size = UDim2.new(1, 0, 0, 40)
+    welcomeLabel.Font = Enum.Font.GothamBold
+    welcomeLabel.Text = "Welcome, " .. Players.LocalPlayer.Name
+    welcomeLabel.TextColor3 = Theme.Text
+    welcomeLabel.TextSize = 18
+    welcomeLabel.TextXAlignment = Enum.TextXAlignment.Left
+    welcomeLabel.TextYAlignment = Enum.TextYAlignment.Center
+    welcomeLabel.LayoutOrder = 0
   
     local function addInfoLabel(text)
         local label = Instance.new("TextLabel")
@@ -1465,6 +1460,7 @@ function Library:CreateWindow(config)
     addInfoLabel("Display Name: " .. (Players.LocalPlayer.DisplayName or Players.LocalPlayer.Name))
     addInfoLabel("User ID: " .. Players.LocalPlayer.UserId)
   
+    -- Auto Config Tab
     local configTab = Window:CreateTab({
         Name = "Config"
     })
