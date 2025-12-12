@@ -16,7 +16,7 @@ local TabContainer
 local NotificationHolder
 local isMinimized = false
 local titleAnimation
-local ORIGINAL_SIZE = UDim2.new(0, 800, 0, 600)
+local ORIGINAL_SIZE = UDim2.new(0, 700, 0, 500) -- Corrected to original size
 local MINIMIZED_SIZE = UDim2.new(0, 250, 0, 50)
 
 local Theme = {
@@ -117,7 +117,7 @@ function Library:CreateWindow(config)
     MainFrame.Parent = ScreenGui
     MainFrame.BackgroundColor3 = Theme.Background
     MainFrame.BorderSizePixel = 0
-    MainFrame.Position = UDim2.new(0.5, -400, 0.5, -300) 
+    MainFrame.Position = UDim2.new(0.5, -ORIGINAL_SIZE.Offset.X/2, 0.5, -ORIGINAL_SIZE.Offset.Y/2) 
     MainFrame.Size = ORIGINAL_SIZE 
     MainFrame.ClipsDescendants = true
     
@@ -138,6 +138,45 @@ function Library:CreateWindow(config)
     shadow.ImageTransparency = 0.5
     shadow.ScaleType = Enum.ScaleType.Slice
     shadow.SliceCenter = Rect.new(49, 49, 450, 450)
+    
+    -- MOVED TABCONTAINER AND CONTENTFRAME CREATION HERE TO FIX NIL ERROR
+    TabContainer = Instance.new("Frame")
+    TabContainer.Name = "TabContainer"
+    TabContainer.Parent = MainFrame
+    TabContainer.BackgroundColor3 = Theme.Secondary
+    TabContainer.BorderSizePixel = 0
+    TabContainer.Position = UDim2.new(0, 10, 0, 
+ 60)
+    TabContainer.Size = UDim2.new(0, 150, 1, -70)
+    
+    local tabCorner = Instance.new("UICorner")
+    tabCorner.CornerRadius = UDim.new(0, 10)
+    tabCorner.Parent = TabContainer
+    
+    local tabList = Instance.new("UIListLayout")
+    tabList.Parent = TabContainer
+    tabList.SortOrder = Enum.SortOrder.LayoutOrder
+    tabList.Padding = UDim.new(0, 8)
+    
+    local tabPadding = Instance.new("UIPadding")
+    tabPadding.Parent = TabContainer
+    tabPadding.PaddingTop = UDim.new(0, 10)
+    tabPadding.PaddingLeft = UDim.new(0, 10)
+    tabPadding.PaddingRight = 
+ UDim.new(0, 10)
+    
+    ContentFrame = Instance.new("Frame")
+    ContentFrame.Name = "ContentFrame"
+    ContentFrame.Parent = MainFrame
+    ContentFrame.BackgroundColor3 = Theme.Secondary
+    ContentFrame.BorderSizePixel = 0
+    ContentFrame.Position = UDim2.new(0, 170, 0, 60)
+    ContentFrame.Size = UDim2.new(1, -180, 1, -70)
+    
+    local contentCorner = Instance.new("UICorner")
+    contentCorner.CornerRadius = UDim.new(0, 10)
+    contentCorner.Parent = ContentFrame
+    
     
     local topBar = Instance.new("Frame")
     topBar.Name = "TopBar"
@@ -251,38 +290,6 @@ function Library:CreateWindow(config)
         CreateTween(closeBtn, {BackgroundColor3 = Theme.Primary}, 0.2)
     end)
     
-    local TabContainer = Instance.new("Frame")
-    TabContainer.Name = "TabContainer"
-    TabContainer.Parent = MainFrame
-    TabContainer.BackgroundColor3 = Theme.Secondary
-    TabContainer.BorderSizePixel = 0
-    TabContainer.Position = UDim2.new(0, 10, 0, 
- 60)
-    TabContainer.Size = UDim2.new(0, 150, 1, -70)
-    
-    local tabCorner = Instance.new("UICorner")
-    tabCorner.CornerRadius = UDim.new(0, 10)
-    tabCorner.Parent = TabContainer
-    
-    local tabList = Instance.new("UIListLayout")
-    tabList.Parent = TabContainer
-    tabList.SortOrder = Enum.SortOrder.LayoutOrder
-    tabList.Padding = UDim.new(0, 8)
-    
-    local tabPadding = Instance.new("UIPadding")
-    tabPadding.Parent = TabContainer
-    tabPadding.PaddingTop = UDim.new(0, 10)
-    tabPadding.PaddingLeft = UDim.new(0, 10)
-    tabPadding.PaddingRight = 
- UDim.new(0, 10)
-    
-    ContentFrame = Instance.new("Frame")
-    ContentFrame.Name = "ContentFrame"
-    ContentFrame.Parent = MainFrame
-    ContentFrame.BackgroundColor3 = Theme.Secondary
-    ContentFrame.BorderSizePixel = 0
-    ContentFrame.Position = UDim2.new(0, 170, 0, 60)
-    ContentFrame.Size = UDim2.new(1, -180, 1, -70)
     
     local contentCorner = Instance.new("UICorner")
     contentCorner.CornerRadius = UDim.new(0, 10)
