@@ -261,17 +261,20 @@ function Library:CreateWindow(config)
   
     local savedTogglePos = UDim2.new(1, buttonOffsetX, 0.5, buttonOffsetY)
     local toggleDragging = false
+    local downPos = nil
     local toggleDragInput, toggleMousePos, toggleFramePos
   
     toggleButton.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             toggleDragging = true
+            downPos = input.Position
             toggleMousePos = input.Position
             toggleFramePos = toggleButton.Position
           
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     toggleDragging = false
+                    downPos = nil
                     savedTogglePos = toggleButton.Position
                 end
             end)
@@ -279,7 +282,7 @@ function Library:CreateWindow(config)
     end)
   
     toggleButton.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             toggleDragInput = input
         end
     end)
@@ -297,8 +300,11 @@ function Library:CreateWindow(config)
     end)
   
     toggleButton.MouseButton1Click:Connect(function()
-        if toggleDragging then
-            return
+        if downPos then
+            local currentPos = UserInputService:GetMouseLocation()
+            if (Vector2.new(currentPos.X, currentPos.Y) - downPos).Magnitude > 10 then
+                return
+            end
         end
         Ripple(toggleButton, toggleButton.AbsoluteSize.X / 2, toggleButton.AbsoluteSize.Y / 2)
         toggleUI()
@@ -743,7 +749,7 @@ function Library:CreateWindow(config)
             sliderBtnCorner.Parent = sliderButton
           
             local currentValue = sliderDefault
-            local dragging = false
+            local sliderDragging = false
           
             local function updateSlider(input)
                 local pos = math.clamp((input.Position.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X, 0, 1)
@@ -759,20 +765,20 @@ function Library:CreateWindow(config)
                 pcall(sliderCallback, value)
             end
           
-            sliderButton.MouseButton1Down:Connect(function()
-                dragging = true
+            local connectionDown = sliderButton.MouseButton1Down:Connect(function()
+                sliderDragging = true
                 CreateTween(sliderButton, {Size = UDim2.new(0, 16, 0, 16)}, 0.1)
             end)
           
-            UserInputService.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    dragging = false
+            local connectionEnded = UserInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 and sliderDragging then
+                    sliderDragging = false
                     CreateTween(sliderButton, {Size = UDim2.new(0, 12, 0, 12)}, 0.1)
                 end
             end)
           
-            UserInputService.InputChanged:Connect(function(input)
-                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local connectionChanged = UserInputService.InputChanged:Connect(function(input)
+                if sliderDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                     updateSlider(input)
                 end
             end)
@@ -790,6 +796,11 @@ function Library:CreateWindow(config)
                     local pos = (currentValue - sliderMin) / (sliderMax - sliderMin)
                     sliderFill.Size = UDim2.new(pos, 0, 1, 0)
                     sliderButton.Position = UDim2.new(pos, -6, 0.5, -6)
+                end,
+                Destroy = function(self)
+                    connectionDown:Disconnect()
+                    connectionEnded:Disconnect()
+                    connectionChanged:Disconnect()
                 end
             }
         end
@@ -852,6 +863,7 @@ function Library:CreateWindow(config)
             local channels = {"R", "G", "B"}
             local values = {math.floor(defaultColor.R * 255), math.floor(defaultColor.G * 255), math.floor(defaultColor.B * 255)}
             local channelSliders = {}
+            local connections = {}
           
             for i, ch in ipairs(channels) do
                 local chFrame = Instance.new("Frame")
@@ -926,23 +938,29 @@ function Library:CreateWindow(config)
                     pcall(pickerCallback, newColor)
                 end
               
-                chButton.MouseButton1Down:Connect(function()
+                local chDown = chButton.MouseButton1Down:Connect(function()
                     chDragging = true
                     CreateTween(chButton, {Size = UDim2.new(0, 16, 0, 16)}, 0.1)
                 end)
               
-                UserInputService.InputEnded:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                table.insert(connections, chDown)
+              
+                local chEnded = UserInputService.InputEnded:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 and chDragging then
                         chDragging = false
                         CreateTween(chButton, {Size = UDim2.new(0, 12, 0, 12)}, 0.1)
                     end
                 end)
               
-                UserInputService.InputChanged:Connect(function(input)
+                table.insert(connections, chEnded)
+              
+                local chChanged = UserInputService.InputChanged:Connect(function(input)
                     if chDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                         updateChSlider(input)
                     end
                 end)
+              
+                table.insert(connections, chChanged)
               
                 chBar.InputBegan:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -969,6 +987,11 @@ function Library:CreateWindow(config)
                         slider.button.Position = UDim2.new(pos, -6, 0.5, -6)
                     end
                     preview.BackgroundColor3 = color
+                end,
+                Destroy = function(self)
+                    for _, conn in ipairs(connections) do
+                        conn:Disconnect()
+                    end
                 end
             }
         end
