@@ -5,7 +5,6 @@
     Demonstrates ALL features available in the library
 ]]--
 
--- Load the library (replace with your actual library loading method)
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/rxdavidcb/xeric-ui/refs/heads/main/ui.lua"))()
 
 -- Create the main window
