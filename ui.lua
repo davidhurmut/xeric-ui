@@ -1,6 +1,5 @@
 --[[
 - Created by fluflu
-- Enhanced with TextInput, Divider, and responsive sizing
 - used for Xeric Hub
 - this UI is free to use for everyone else
 ]]--
