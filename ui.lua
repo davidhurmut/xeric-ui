@@ -118,7 +118,7 @@ function Library:CreateWindow(config)
     DecorativeLine.Parent = MainFrame
     DecorativeLine.BackgroundColor3 = Theme.Primary
     DecorativeLine.BorderSizePixel = 0
-    DecorativeLine.Position = UDim2.new(0.5, -100, 1, 8)
+    DecorativeLine.Position = UDim2.new(0.5, 0, 1, 8)
     DecorativeLine.Size = UDim2.new(0, 200, 0, 2)
     DecorativeLine.AnchorPoint = Vector2.new(0.5, 0)
     DecorativeLine.ZIndex = 5
@@ -257,13 +257,13 @@ function Library:CreateWindow(config)
             ContentFrame.Visible = false
             TabContainer.Visible = false
             CreateTween(MainFrame, {Size = MINIMIZED_SIZE, Position = newPos}, 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-            CreateTween(DecorativeLine, {Position = UDim2.new(0.5, -MINIMIZED_BAR_WIDTH/2, 1, 8), Size = UDim2.new(0, MINIMIZED_BAR_WIDTH, 0, 4)}, 0.3)
+            CreateTween(DecorativeLine, {Position = UDim2.new(0.5, 0, 1, 8), Size = UDim2.new(0, MINIMIZED_BAR_WIDTH, 0, 4)}, 0.3)
             minimizeBtn.Text = "⬜"
             isMinimized = true
             AnimateTitle(true)
         else
             CreateTween(MainFrame, {Size = ORIGINAL_SIZE, Position = newPos}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-            CreateTween(DecorativeLine, {Position = UDim2.new(0.5, -100, 1, 8), Size = UDim2.new(0, 200, 0, 2)}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+            CreateTween(DecorativeLine, {Position = UDim2.new(0.5, 0, 1, 8), Size = UDim2.new(0, 200, 0, 2)}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
             task.wait(0.3)
             ContentFrame.Visible = true
             TabContainer.Visible = true
@@ -561,7 +561,7 @@ function Library:CreateWindow(config)
               
                 UserInputService.InputChanged:Connect(function(input)
                     if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                        local percent = math.clamp((input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
+                        local percent = math.max(0, math.min(1, (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X))
                         local value = math.floor(min + (max - min) * percent / increment) * increment
                         fill.Size = UDim2.new(percent, 0, 1, 0)
                         valueLabel.Text = tostring(value)
