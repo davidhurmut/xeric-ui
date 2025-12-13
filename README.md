@@ -10,13 +10,14 @@ A modern, feature-rich UI library for Roblox with smooth animations, responsive 
 - 🎨 **Modern Theme** - Sleek dark theme with red accents
 - 🔔 **Notification System** - 4 notification types with customizable duration
 - 🪟 **Minimizable Window** - Collapse UI to title bar with animated title
+- 🚩 **Flag System** - Access component values globally via flags
 
 ---
 
 ## Installation
 
 ```lua
-local Library = loadstring(game:HttpGet("raw url here"))()
+local Library = loadstring(game:HttpGet("your-library-url"))()
 ```
 
 ---
@@ -34,6 +35,72 @@ local Tab = Window:CreateTab({
     Name = "Main"
 })
 ```
+
+---
+
+## Flag System 🚩
+
+Flags allow you to access component values globally without storing references. Each component can have a unique flag identifier.
+
+### Using Flags
+
+```lua
+-- Create components with flags
+Tab:AddToggle({
+    Name = "Auto Farm",
+    Default = false,
+    Flag = "AutoFarm"
+})
+
+Tab:AddSlider({
+    Name = "Speed",
+    Min = 16,
+    Max = 100,
+    Default = 16,
+    Flag = "WalkSpeed"
+})
+
+Tab:AddTextInput({
+    Name = "Username",
+    Default = "Player",
+    Flag = "Username"
+})
+
+Tab:AddDropdown({
+    Name = "Weapon",
+    Options = {"Sword", "Bow"},
+    Default = "Sword",
+    Flag = "SelectedWeapon"
+})
+
+Tab:AddMultiDropdown({
+    Name = "Perks",
+    Options = {"Speed", "Jump", "Damage"},
+    Default = {"Speed"},
+    Flag = "SelectedPerks"
+})
+
+-- Access flag values anywhere
+print(Tab.Flags.AutoFarm)        -- true/false
+print(Tab.Flags.WalkSpeed)       -- 16-100
+print(Tab.Flags.Username)        -- "Player"
+print(Tab.Flags.SelectedWeapon)  -- "Sword"/"Bow"
+print(Tab.Flags.SelectedPerks)   -- {"Speed", "Jump"}
+
+-- Use in a loop
+while wait(1) do
+    if Tab.Flags.AutoFarm then
+        print("Auto farming with speed:", Tab.Flags.WalkSpeed)
+    end
+end
+```
+
+### Flag Benefits
+
+✅ **No reference storage needed** - Access values without storing component references  
+✅ **Global access** - Read values from anywhere in your code  
+✅ **Auto-updated** - Values update automatically when user changes them  
+✅ **Clean code** - Reduces variable clutter
 
 ---
 
@@ -83,6 +150,7 @@ Creates a switch/toggle with on/off states.
 local toggle = Tab:AddToggle({
     Name = "Enable Feature",
     Default = false,
+    Flag = "FeatureEnabled",  -- Optional: Access via Tab.Flags.FeatureEnabled
     Callback = function(value)
         print("Toggle is now:", value)
     end
@@ -90,11 +158,15 @@ local toggle = Tab:AddToggle({
 
 -- Programmatic control
 toggle:Set(true)  -- Set to enabled
+
+-- Access via flag
+print(Tab.Flags.FeatureEnabled)  -- true/false
 ```
 
 **Properties:**
 - `Name` (string) - Toggle label
 - `Default` (boolean) - Initial state (default: false)
+- `Flag` (string, optional) - Global flag identifier for accessing value
 - `Callback` (function) - Called with boolean value on change
 
 **Methods:**
@@ -113,6 +185,7 @@ local slider = Tab:AddSlider({
     Max = 100,
     Default = 16,
     Increment = 1,
+    Flag = "WalkSpeed",  -- Optional: Access via Tab.Flags.WalkSpeed
     Callback = function(value)
         print("Slider value:", value)
     end
@@ -120,6 +193,9 @@ local slider = Tab:AddSlider({
 
 -- Programmatic control
 slider:Set(50)  -- Set to specific value
+
+-- Access via flag
+print(Tab.Flags.WalkSpeed)  -- Current numeric value
 ```
 
 **Properties:**
@@ -128,6 +204,7 @@ slider:Set(50)  -- Set to specific value
 - `Max` (number) - Maximum value (default: 100)
 - `Default` (number) - Initial value (default: 50)
 - `Increment` (number) - Step size (default: 1)
+- `Flag` (string, optional) - Global flag identifier for accessing value
 - `Callback` (function) - Called with number value on change
 
 **Methods:**
@@ -144,6 +221,7 @@ local dropdown = Tab:AddDropdown({
     Name = "Select Weapon",
     Options = {"Sword", "Bow", "Staff"},
     Default = "Sword",
+    Flag = "SelectedWeapon",  -- Optional: Access via Tab.Flags.SelectedWeapon
     Callback = function(option)
         print("Selected:", option)
     end
@@ -154,12 +232,16 @@ dropdown:Set("Bow")  -- Select specific option
 
 -- Refresh options
 dropdown:Refresh({"Sword", "Bow", "Staff", "Axe"}, true)  -- keepCurrent = true
+
+-- Access via flag
+print(Tab.Flags.SelectedWeapon)  -- Current selected option string
 ```
 
 **Properties:**
 - `Name` (string) - Dropdown label
 - `Options` (table) - Array of option strings
 - `Default` (string) - Initially selected option (default: first option)
+- `Flag` (string, optional) - Global flag identifier for accessing value
 - `Callback` (function) - Called with selected string on change
 
 **Methods:**
@@ -179,6 +261,7 @@ local multiDropdown = Tab:AddMultiDropdown({
     Name = "Select Perks",
     Options = {"Speed", "Jump", "Damage", "Health"},
     Default = {"Speed", "Jump"},
+    Flag = "SelectedPerks",  -- Optional: Access via Tab.Flags.SelectedPerks
     Callback = function(selected)
         print("Selected perks:")
         for _, perk in ipairs(selected) do
@@ -189,12 +272,16 @@ local multiDropdown = Tab:AddMultiDropdown({
 
 -- Programmatic control
 multiDropdown:Set({"Damage", "Health"})  -- Set multiple selections
+
+-- Access via flag
+print(Tab.Flags.SelectedPerks)  -- Array of selected strings
 ```
 
 **Properties:**
 - `Name` (string) - Multi-dropdown label
 - `Options` (table) - Array of option strings
 - `Default` (table) - Array of initially selected options (default: {})
+- `Flag` (string, optional) - Global flag identifier for accessing value
 - `Callback` (function) - Called with array of selected strings on change
 
 **Methods:**
@@ -212,6 +299,7 @@ local input = Tab:AddTextInput({
     Placeholder = "Enter your name...",
     Default = "",
     ClearTextOnFocus = false,
+    Flag = "Username",  -- Optional: Access via Tab.Flags.Username
     Callback = function(text)
         print("You entered:", text)
     end
@@ -220,6 +308,9 @@ local input = Tab:AddTextInput({
 -- Programmatic control
 input:Set("NewName")        -- Set text value
 local value = input:Get()   -- Get current text
+
+-- Access via flag
+print(Tab.Flags.Username)  -- Current text value (updates on any change)
 ```
 
 **Properties:**
@@ -227,11 +318,14 @@ local value = input:Get()   -- Get current text
 - `Placeholder` (string) - Placeholder text (default: "Enter text...")
 - `Default` (string) - Initial text value (default: "")
 - `ClearTextOnFocus` (boolean) - Clear text when focused (default: false)
+- `Flag` (string, optional) - Global flag identifier for accessing value
 - `Callback` (function) - Called with text string when Enter is pressed
 
 **Methods:**
 - `:Set(text)` - Programmatically set input text
 - `:Get()` - Get current input text
+
+**Note:** Flag updates in real-time as user types, while Callback only fires on Enter press.
 
 ---
 
