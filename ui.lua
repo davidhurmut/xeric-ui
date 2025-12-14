@@ -39,8 +39,8 @@ task.delay(.5,function()c:Destroy()end)
 end
 function Lib:CreateWindow(cfg)
 cfg=cfg or{}
-local wName=cfg.Name or"Fluent UI"
-local wIcon=cfg.Icon or nil
+local wName=cfg.Name or"Xeric UI"
+local wIcon=cfg.Icon or"rbxassetid://78313603506662"
 local function animTitle(on)
 if on then
 if tAnim then tAnim:Disconnect()end
@@ -84,11 +84,24 @@ sh.SliceCenter=Rect.new(49,49,450,450)
 local dragLine=Instance.new("Frame")
 dragLine.Name="DragLine"
 dragLine.Parent=mf
-dragLine.BackgroundColor3=theme.sc
+dragLine.BackgroundColor3=theme.pr
 dragLine.BorderSizePixel=0
-dragLine.Position=UDim2.new(.5,-60,1,5)
-dragLine.Size=UDim2.new(0,120,0,8)
+dragLine.Position=UDim2.new(.5,-100,1,-10)
+dragLine.Size=UDim2.new(0,200,0,16)
 dragLine.ZIndex=2
+local glow=Instance.new("ImageLabel")
+glow.Name="Glow"
+glow.Parent=dragLine
+glow.BackgroundTransparency=1
+glow.Position=UDim2.new(0.5,0,0.5,0)
+glow.AnchorPoint=Vector2.new(0.5,0.5)
+glow.Size=UDim2.new(1,40,1,40)
+glow.Image="rbxassetid://4996891970"
+glow.ImageColor3=theme.pr
+glow.ImageTransparency=0.6
+glow.ZIndex=1
+glow.ScaleType=Enum.ScaleType.Slice
+glow.SliceCenter=Rect.new(20,20,280,280)
 Instance.new("UICorner",dragLine).CornerRadius=UDim.new(1,0)
 tc=Instance.new("Frame")
 tc.Name="TabContainer"
@@ -129,9 +142,7 @@ tbCover.BackgroundColor3=theme.sc
 tbCover.BorderSizePixel=0
 tbCover.Position=UDim2.new(0,0,1,-10)
 tbCover.Size=UDim2.new(1,0,0,10)
-local icon
-if wIcon then
-icon=Instance.new("ImageLabel")
+local icon=Instance.new("ImageLabel")
 icon.Name="Icon"
 icon.Parent=tb
 icon.BackgroundTransparency=1
@@ -140,14 +151,16 @@ icon.Size=UDim2.new(0,30,0,30)
 icon.Image=wIcon
 icon.ScaleType=Enum.ScaleType.Fit
 icon.ImageTransparency=1
-tw(icon,{ImageTransparency=0},.5)
-end
+task.spawn(function()
+icon.Image=wIcon
+tw(icon,{ImageTransparency=0},0.6)
+end)
 local title=Instance.new("TextLabel")
 title.Name="Title"
 title.Parent=tb
 title.BackgroundTransparency=1
-title.Position=UDim2.new(0,wIcon and 55 or 20,0,0)
-title.Size=UDim2.new(1,wIcon and -165 or -130,1,0)
+title.Position=UDim2.new(0,55,0,0)
+title.Size=UDim2.new(1,-165,1,0)
 title.Font=Enum.Font.GothamBold
 title.Text=wName
 title.TextColor3=theme.tx
@@ -184,7 +197,7 @@ minBtn.Text="⬜"
 isMin=true
 animTitle(true)
 else
-tw(title,{Size=UDim2.new(1,wIcon and -165 or -130,1,0)},.5)
+tw(title,{Size=UDim2.new(1,-165,1,0)},.5)
 tw(mf,{Size=oSize,Position=np},.5,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
 task.delay(.5,function()
 cf.Visible=true
